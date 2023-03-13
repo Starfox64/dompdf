@@ -40,7 +40,7 @@ class TableRow extends AbstractFrameReflower
         $page->check_forced_page_break($frame);
 
         // Bail if the page is full
-        if ($page->is_full()) {
+        if ($this->_frame->find_pageable_context()->is_full()) {
             return;
         }
 
@@ -55,13 +55,13 @@ class TableRow extends AbstractFrameReflower
             $child->set_containing_block($cb);
             $child->reflow();
 
-            if ($page->is_full()) {
-                break;
+            if ($this->_frame->find_pageable_context()->is_full()) {
+                //break;
             }
         }
 
-        if ($page->is_full()) {
-            return;
+        if ($this->_frame->find_pageable_context()->is_full()) {
+            //return;
         }
 
         $table = TableFrameDecorator::find_parent_table($this->_frame);
@@ -70,6 +70,17 @@ class TableRow extends AbstractFrameReflower
         $style->set_used("height", $cellmap->get_frame_height($this->_frame));
 
         $this->_frame->set_position($cellmap->get_frame_position($this->_frame));
+
+        // split parent now if the row was split
+        if ($frame->_new_row !== null) {
+            //TODO: walk cell map and add missing cells (append empty frame and split)
+            //      AND/OR, update cell map so that existing cells +1 their rowspan?
+            //      Increase the rowspan on any element with a rowspan? On the split cells?
+            $frame->_new_row->split(null, true, false); // FIXME: why is this necessary, shouldn't the new row split during the next iteration?
+            // Preserve the current counter values. This must be done after the
+            // parent split, as counters get reset on frame reset
+            //$frame->_new_row->_counters = $frame->_counters;
+        }
     }
 
     /**

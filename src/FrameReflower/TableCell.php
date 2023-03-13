@@ -95,7 +95,7 @@ class TableCell extends Block
             $child->reflow($this->_frame);
             $this->process_float($child, $content_x, $cb_w);
 
-            if ($page->is_full()) {
+            if ($this->_frame->is_full()) {
                 break;
             }
         }
