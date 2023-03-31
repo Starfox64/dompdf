@@ -590,10 +590,11 @@ class Helpers
     }
 
     /**
-     * @param $c
+     * @param int $c
+     *
      * @return bool|string
      */
-    public static function unichr($c)
+    public static function unichr(int $c)
     {
         if ($c <= 0x7F) {
             return chr($c);
